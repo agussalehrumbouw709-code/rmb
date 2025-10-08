@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apliaksi Belajar Al-qur'an & Tajwid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .creator-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tajwid-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .tajwid-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tajwid-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .tajwid-card .arabic {
+            font-size: 1.8em;
+            text-align: right;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            direction: rtl;
+            font-weight: bold;
+        }
+
+        .tajwid-card .description {
+            line-height: 1.6;
+            color: #495057;
+        }
+
+        .highlight {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .red { background: #ffebee; color: #c62828; }
+        .green { background: #e8f5e9; color: #2e7d32; }
+        .blue { background: #e3f2fd; color: #1565c0; }
+        .yellow { background: #fff9c4; color: #f57f17; }
+        .purple { background: #f3e5f5; color: #6a1b9a; }
+
+        .quiz-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .quiz-option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .quiz-option.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .content { padding: 15px; }
+            .nav-tab { padding: 12px 20px; font-size: 0.9em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 Aplikasi Belajar Al-qur'an & Tajwid</h1>
+            <p>Pelajari Tajwid Dengan Mudah Dan Intraktif</p>
+            <div class="creator-info">
+                <strong>Dibuat oleh:</strong> Agus Saleh Rumbouw <br>
+                <strong>Email:</strong> gsrmbouw8@gmail.com
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('home')">🏠 Beranda</button>
+            <button class="nav-tab" onclick="showTab('tajwid')">📚 Hukum Tajwid</button>
+            <button class="nav-tab" onclick="showTab('nun-mati')">ن Nun Mati & Tanwin</button>
+            <button class="nav-tab" onclick="showTab('mim-mati')">م Mim Mati</button>
+            <button class="nav-tab" onclick="showTab('mad')">➖ Mad</button>
+            <button class="nav-tab" onclick="showTab('qalqalah')">⚡ Qalqalah</button>
+            <button class="nav-tab" onclick="showTab('quiz')">🎯 Kuis</button>
+        </div>
+
+        <div class="content">
+            <!-- TAB BERANDA -->
+            <div id="home" class="tab-content active">
+                <h2 style="color: #667eea; margin-bottom: 20px;">SELAMAT DATANG!</h2>
+                <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 20px;">
+                    Bismillah nama saya <strong>Agus Saleh Rumbouw </strong>. ini adalah awal saya mulai belajar untuk membuat suatu aplikasi,
+                    saya mempunyai sebuah ide dari apa yang saya pelajari untuk membuat aplikasi sederhana ini, yaitu aplkasi tajwid al-qur'an, semoga apk ini dapat membantu anda dalam belajar dan membaca al-qur,an. <strong>SELAMAT MEMPELAJARI</strong>
+                </p>
+                
+                <div class="tajwid-card">
+                    <h3>🎯 Fitur Aplikasi</h3>
+                    <ul style="line-height: 2; margin-left: 20px;">
+                        <li><strong>Hukum Tajwid Lengkap:</strong> Pelajari semua hukum tajwid dengan penjelasan detail</li>
+                        <li><strong>Contoh Arab:</strong> Setiap hukum dilengkapi dengan contoh tulisan Arab</li>
+                        <li><strong>Kuis Interaktif:</strong> Uji Pemahamanmu Dengan Kuis</li>
+                        <li><strong>Navigasi Mudah:</strong> Interface yang user-friendly</li>
+                    </ul>
+                </div>
+
+                <div class="tajwid-card">
+                    <h3>📖 Kategori Hukum Tajwid</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #667eea;">Nun Mati & Tanwin</h4>
+                            <p>Idzhar, Idgham, Iqlab, Ikhfa</p>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #667eea;">Mim Mati</h4>
+                            <p>Idzhar Syafawi, Idgham Mimi, Ikhfa Syafawi</p>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #667eea;">Mad</h4>
+                            <p>Mad Thobi'i, Mad Wajib, Mad Jaiz, dll</p>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #667eea;">Qalqalah</h4>
+                            <p>Sughra & Kubra</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB HUKUM TAJWID UMUM -->
+            <div id="tajwid" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px;">📚 Hukum Tajwid Dasar</h2>
+                <input type="text" class="search-box" placeholder="🔍 Cari hukum tajwid..." onkeyup="searchTajwid(this.value, 'tajwid')">
+                
+                <div class="tajwid-list">
+                    <div class="tajwid-card">
+                        <h3>1. Makharijul Huruf</h3>
+                        <div class="arabic">مَخَارِجُ الْحُرُوْفِ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Tempat keluarnya huruf-huruf hijaiyah.<br><br>
+                            <strong>Pembagian:</strong><br>
+                            • <span class="highlight blue">Al-Jauf</span> (Rongga mulut): huruf mad (ا و ي)<br>
+                            • <span class="highlight green">Al-Halq</span> (Tenggorokan): ء ه ع ح غ خ<br>
+                            • <span class="highlight yellow">Al-Lisan</span> (Lidah): ق ك ج ي ش ض ل ن ر ط د ت ص ز س ظ ذ ث<br>
+                            • <span class="highlight red">Asy-Syafatain</span> (Dua bibir): ف ب م و
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>2. Sifatul Huruf</h3>
+                        <div class="arabic">صِفَاتُ الْحُرُوْفِ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Sifat-sifat yang melekat pada huruf hijaiyah saat diucapkan.<br><br>
+                            <strong>Sifat yang memiliki lawan:</strong><br>
+                            • Hams ↔ Jahr (berbisik ↔ jelas)<br>
+                            • Syiddah ↔ Rakhawah (keras ↔ lembut)<br>
+                            • Isti'la ↔ Istifal (tinggi ↔ rendah)<br>
+                            • Ithbaq ↔ Infitah (tertutup ↔ terbuka)<br>
+                            • Idzlaq ↔ Ishmat (lancar ↔ terhalang)
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>3. Hukum Ra</h3>
+                        <div class="arabic">حُكْمُ الرَّاءِ</div>
+                        <div class="description">
+                            <strong>Ra Tafkhim (tebal):</strong><br>
+                            • Ra berharakat fathah: <span class="highlight red">رَ</span><br>
+                            • Ra berharakat dhammah: <span class="highlight red">رُ</span><br>
+                            • Ra sukun setelah fathah/dhammah: <span class="highlight red">قَرْ - ضُرَّ</span><br><br>
+                            <strong>Ra Tarqiq (tipis):</strong><br>
+                            • Ra berharakat kasrah: <span class="highlight green">رِ</span><br>
+                            • Ra sukun setelah kasrah: <span class="highlight green">فِرْعَوْن</span>
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>4. Hukum Lam</h3>
+                        <div class="arabic">حُكْمُ اللَّامِ</div>
+                        <div class="description">
+                            <strong>Lam Tarqiq (tipis):</strong> Dibaca tipis pada semua keadaan<br><br>
+                            <strong>Lam Tafkhim (tebal):</strong> Hanya pada lafadz Allah<br>
+                            • Setelah fathah/dhammah: <span class="highlight red">اللّٰهُ - قَالَ اللّٰهُ</span><br>
+                            • Setelah kasrah dibaca tipis: <span class="highlight green">بِسْمِ اللّٰهِ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB NUN MATI & TANWIN -->
+            <div id="nun-mati" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px;">ن Hukum Nun Mati & Tanwin</h2>
+                <input type="text" class="search-box" placeholder="🔍 Cari hukum..." onkeyup="searchTajwid(this.value, 'nun-mati')">
+                
+                <div class="tajwid-list">
+                    <div class="tajwid-card">
+                        <h3>1. Idzhar Halqi (الإظهار الحلقي)</h3>
+                        <div class="arabic">مِنْ ءَامَنَ - مَنْ هَاجَرَ - عَلِيمٌ حَكِيمٌ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Membaca nun mati/tanwin dengan jelas tanpa dengung.<br>
+                            <strong>Syarat:</strong> Bertemu dengan salah satu dari 6 huruf halqi:<br>
+                            <span class="highlight red">ء ه ع ح غ خ</span><br>
+                            <strong>Cara Baca:</strong> Jelas dan terang, tanpa dengung di hidung
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>2. Idgham (الإدغام)</h3>
+                        <div class="arabic">مِنْ وَلِيٍّ - مِنْ لَّدُنْهُ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Memasukkan nun mati/tanwin ke huruf berikutnya.<br><br>
+                            <strong>a. Idgham Bighunnah (dengan dengung):</strong><br>
+                            Huruf: <span class="highlight blue">ي ن م و</span> (يَنْمُوْ)<br>
+                            Contoh: مِنْ يَّشَاءُ - هُدًى وَّرَحْمَةً<br><br>
+                            <strong>b. Idgham Bilaghunnah (tanpa dengung):</strong><br>
+                            Huruf: <span class="highlight green">ل ر</span><br>
+                            Contoh: مِنْ رَّبِّهِمْ - هُدًى لِّلْمُتَّقِيْنَ
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>3. Iqlab (الإقلاب)</h3>
+                        <div class="arabic">مِنْۢ بَعْدِ - سَمِيعٌۢ بَصِيرٌ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mengubah nun mati/tanwin menjadi bunyi mim dengan dengung.<br>
+                            <strong>Syarat:</strong> Bertemu dengan huruf <span class="highlight purple">ب</span><br>
+                            <strong>Cara Baca:</strong> Menutup bibir dengan dengung, seperti membaca mim
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>4. Ikhfa Haqiqi (الإخفاء الحقيقي)</h3>
+                        <div class="arabic">مَنْ ذَا - يَوْمَئِذٍ صُمٌّ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Menyamarkan bacaan nun mati/tanwin dengan dengung.<br>
+                            <strong>Syarat:</strong> Bertemu dengan 15 huruf:<br>
+                            <span class="highlight yellow">ص ذ ث ك ج ش ق س د ط ز ف ت ض ظ</span><br>
+                            <strong>Cara Baca:</strong> Antara jelas dan masuk, dengan dengung di hidung
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB MIM MATI -->
+            <div id="mim-mati" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px;">م Hukum Mim Mati</h2>
+                <input type="text" class="search-box" placeholder="🔍 Cari hukum..." onkeyup="searchTajwid(this.value, 'mim-mati')">
+                
+                <div class="tajwid-list">
+                    <div class="tajwid-card">
+                        <h3>1. Idzhar Syafawi (الإظهار الشفوي)</h3>
+                        <div class="arabic">لَهُمْ فِيهَا - عَلَيْهِمْ وَلَا</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Membaca mim mati dengan jelas dari bibir.<br>
+                            <strong>Syarat:</strong> Mim mati bertemu dengan semua huruf hijaiyah kecuali <span class="highlight red">م</span> dan <span class="highlight blue">ب</span><br>
+                            <strong>Cara Baca:</strong> Jelas dari bibir tanpa dengung
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>2. Idgham Mimi / Idgham Mutamatsilain (الإدغام المثلين)</h3>
+                        <div class="arabic">لَهُم مَّا يَشَاءُونَ - إِنْ كُنْتُمْ مُّؤْمِنِينَ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Memasukkan mim mati ke mim berikutnya dengan dengung.<br>
+                            <strong>Syarat:</strong> Mim mati bertemu dengan huruf <span class="highlight green">م</span><br>
+                            <strong>Cara Baca:</strong> Ditasydidkan dengan dengung panjang 2 harakat
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>3. Ikhfa Syafawi (الإخفاء الشفوي)</h3>
+                        <div class="arabic">تَرْمِيهِمْ بِحِجَارَةٍ - عَلَيْهِمْ بِمُصَيْطِرٍ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Menyamarkan mim mati dengan dengung saat bertemu ba.<br>
+                            <strong>Syarat:</strong> Mim mati bertemu dengan huruf <span class="highlight purple">ب</span><br>
+                            <strong>Cara Baca:</strong> Bibir menutup rapat dengan dengung di hidung
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB MAD -->
+            <div id="mad" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px;">➖ Hukum Mad</h2>
+                <input type="text" class="search-box" placeholder="🔍 Cari hukum..." onkeyup="searchTajwid(this.value, 'mad')">
+                
+                <div class="tajwid-list">
+                    <div class="tajwid-card">
+                        <h3>1. Mad Thobi'i (المد الطبيعي)</h3>
+                        <div class="arabic">قَالَ - يَقُولُ - فِي</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad asli yang tidak bergantung pada hamzah atau sukun.<br>
+                            <strong>Panjang:</strong> <span class="highlight blue">1 alif (2 harakat)</span><br>
+                            <strong>Huruf Mad:</strong> ا و ي yang didahului harakat yang sesuai
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>2. Mad Wajib Muttashil (المد الواجب المتصل)</h3>
+                        <div class="arabic">جَآءَ - سَآءَ - سُوْءَ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad yang bertemu hamzah dalam satu kata.<br>
+                            <strong>Panjang:</strong> <span class="highlight red">2.5 alif (5 harakat)</span><br>
+                            <strong>Hukum:</strong> Wajib dipanjangkan
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>3. Mad Jaiz Munfashil (المد الجائز المنفصل)</h3>
+                        <div class="arabic">إِنَّآ أَعْطَيْنَا - بِمَآ أُنْزِلَ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad yang bertemu hamzah di kata terpisah.<br>
+                            <strong>Panjang:</strong> <span class="highlight yellow">1-2.5 alif (2-5 harakat)</span><br>
+                            <strong>Hukum:</strong> Boleh panjang atau pendek (jaiz)
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>4. Mad Lazim (المد اللازم)</h3>
+                        <div class="arabic">الْحَآقَّةُ - وَلَا الضَّآلِّينَ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad yang bertemu dengan huruf bertasydid atau sukun.<br>
+                            <strong>Panjang:</strong> <span class="highlight green">3 alif (6 harakat)</span><br>
+                            <strong>Jenis:</strong><br>
+                            • Mad Lazim Mutsaqqal Kilmi (ada tasydid): الْحَآقَّةُ<br>
+                            • Mad Lazim Mukhaffaf Kilmi (ada sukun): ءَآلْـٰٔنَ<br>
+                            • Mad Lazim Harfi: الم - حم
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>5. Mad Aridh Lissukun (المد العارض للسكون)</h3>
+                        <div class="arabic">الرَّحِيْمْ - الْعَالَمِيْنْ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad thobi'i yang bertemu sukun karena waqaf.<br>
+                            <strong>Panjang:</strong> <span class="highlight purple">1-3 alif (2-6 harakat)</span><br>
+                            <strong>Hukum:</strong> Boleh pendek, sedang, atau panjang
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>6. Mad Badal (مد البدل)</h3>
+                        <div class="arabic">ءَامَنَ - أُوْتُوا - إِيْمَانًا</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Hamzah yang diganti dengan huruf mad.<br>
+                            <strong>Panjang:</strong> <span class="highlight blue">1 alif (2 harakat)</span><br>
+                            <strong>Contoh:</strong> أَأْمَنَ → ءَامَنَ
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>7. Mad Iwadh (مد العوض)</h3>
+                        <div class="arabic">هُدًى - رَحْمَةً</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mengganti tanwin fathah dengan alif saat waqaf.<br>
+                            <strong>Panjang:</strong> <span class="highlight green">1 alif (2 harakat)</span><br>
+                            <strong>Syarat:</strong> Hanya saat waqaf
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>8. Mad Shilah (مد الصلة)</h3>
+                        <div class="arabic">إِنَّهُ هُوَ - لَهُ مَا</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad pada ha dhamir (هُ - هِ) yang diwashalkan.<br>
+                            <strong>Jenis:</strong><br>
+                            • Mad Shilah Qashirah: panjang 1 alif (2 harakat)<br>
+                            • Mad Shilah Thawilah: panjang 2.5 alif (5 harakat) jika bertemu hamzah
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>9. Mad Lin (مد اللين)</h3>
+                        <div class="arabic">خَوْفٌ - بَيْتٍ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Mad pada waw/ya sukun yang didahului fathah.<br>
+                            <strong>Panjang:</strong> <span class="highlight yellow">1-3 alif (2-6 harakat)</span> saat waqaf<br>
+                            <strong>Huruf:</strong> وْ atau يْ setelah fathah
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB QALQALAH -->
+            <div id="qalqalah" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px;">⚡ Hukum Qalqalah</h2>
+                <input type="text" class="search-box" placeholder="🔍 Cari hukum..." onkeyup="searchTajwid(this.value, 'qalqalah')">
+                
+                <div class="tajwid-list">
+                    <div class="tajwid-card">
+                        <h3>Pengertian Qalqalah</h3>
+                        <div class="arabic">قَلْقَلَة</div>
+                        <div class="description">
+                            <strong>Definisi:</strong> Memantulkan suara pada huruf yang sukun/mati sehingga terdengar suara tambahan yang jelas.<br>
+                            <strong>Huruf Qalqalah:</strong> <span class="highlight red">ق ط ب ج د</span><br>
+                            <strong>Cara Menghapal:</strong> قُطْبُ جَدٍّ (Quthbu Jaddin)
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>1. Qalqalah Sughra (الصغرى)</h3>
+                        <div class="arabic">يَخْلُقُ - أَحَطتُ - مِنْ قَبْلِ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Qalqalah kecil yang terjadi di tengah kalimat.<br>
+                            <strong>Syarat:</strong> Huruf qalqalah sukun di tengah kata atau ketika washal<br>
+                            <strong>Cara Baca:</strong> Dipantulkan ringan/pendek<br>
+                            <strong>Contoh:</strong><br>
+                            • أَقْرَبُ (ق sukun di tengah)<br>
+                            • فَاطْمَئِنَّ (ط sukun di tengah)<br>
+                            • يَبْسُطُ (ب sukun di tengah)
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>2. Qalqalah Kubra (الكبرى)</h3>
+                        <div class="arabic">وَالْفَجْرْ - مُحِيطْ - الْوَاحِدْ</div>
+                        <div class="description">
+                            <strong>Pengertian:</strong> Qalqalah besar yang terjadi pada akhir kalimat (waqaf).<br>
+                            <strong>Syarat:</strong> Huruf qalqalah sukun di akhir kata saat waqaf<br>
+                            <strong>Cara Baca:</strong> Dipantulkan kuat/panjang<br>
+                            <strong>Contoh:</strong><br>
+                            • الْفَلَقْ (waqaf pada ق)<br>
+                            • مُحِيطْ (waqaf pada ط)<br>
+                            • حَسَبْ (waqaf pada ب)
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>Tips Membaca Qalqalah</h3>
+                        <div class="description">
+                            ✅ <strong>Yang Benar:</strong><br>
+                            • Memantulkan huruf dengan jelas tanpa mengubah bunyi asli<br>
+                            • Qalqalah sughra lebih pendek dari qalqalah kubra<br>
+                            • Tidak menambahkan harakat<br><br>
+                            
+                            ❌ <strong>Kesalahan Umum:</strong><br>
+                            • Menambahkan harakat kasrah setelah huruf qalqalah<br>
+                            • Memantulkan terlalu kuat pada qalqalah sughra<br>
+                            • Tidak memantulkan sama sekali
+                        </div>
+                    </div>
+
+                    <div class="tajwid-card">
+                        <h3>Hukum Tambahan</h3>
+                        <div class="description">
+                            <strong>1. Qalqalah + Tasydid:</strong><br>
+                            Jika huruf qalqalah bertasydid, dibaca dengan lebih kuat.<br>
+                            Contoh: الْحَقُّ - تَقَطَّعَ<br><br>
+                            
+                            <strong>2. Waqaf pada Huruf Qalqalah:</strong><br>
+                            Selalu dibaca qalqalah kubra meski di tengah ayat.<br>
+                            Contoh: وَمَا أَدْرَاكَ مَا يَوْمُ الدِّينِ ۝ (waqaf pada الدين)<br><br>
+                            
+                            <strong>3. Huruf Qalqalah Hidup:</strong><br>
+                            Jika berharakat, tidak ada qalqalah.<br>
+                            Contoh: قَالَ - طَلَبَ (tidak ada qalqalah)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB KUIS -->
+            <div id="quiz" class="tab-content">
+                <h2 style="color: #667eea; margin-bottom: 20px;">🎯 Kuis Tajwid</h2>
+                <p style="margin-bottom: 20px;">Uji pemahaman Anda tentang ilmu tajwid!</p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress" style="width: 0%">0/10</div>
+                </div>
+
+                <div id="quiz-container"></div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="startQuiz()">Mulai Kuis</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" style="display: none;">Pertanyaan Berikutnya</button>
+                </div>
+
+                <div id="result" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; display: none;">
+                    <h3 style="color: #667eea; text-align: center;">Hasil Kuis</h3>
+                    <p style="text-align: center; font-size: 1.5em; font-weight: bold;" id="score"></p>
+                    <p style="text-align: center;" id="feedback"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Aplikasi Belajar Al-Qur'an & Tajwid</strong></p>
+            <p>Dibuat oleh: <strong>Agus Saleh Rumbouw</strong></p>
+            <p>Email: gsrmbouw8@gmail.com</p>
+            <p style="margin-top: 10px; opacity: 0.8;">Oktober 2025 - Semoga bermanfaat gess</p>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            navTabs.forEach(nav => nav.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Search Function
+        function searchTajwid(query, tabId) {
+            const tab = document.getElementById(tabId);
+            const cards = tab.querySelectorAll('.tajwid-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query.toLowerCase())) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Quiz Data
+        const quizData = [
+            {
+                question: "Berapa huruf yang termasuk dalam Idzhar Halqi?",
+                options: ["4 huruf", "5 huruf", "6 huruf", "7 huruf"],
+                correct: 2,
+                explanation: "Idzhar Halqi memiliki 6 huruf: ء ه ع ح غ خ"
+            },
+            {
+                question: "Huruf apa saja yang termasuk dalam Idgham Bighunnah?",
+                options: ["ي ن م و", "ل ر", "ق ط ب ج د", "ء ه ع ح غ خ"],
+                correct: 0,
+                explanation: "Idgham Bighunnah menggunakan huruf: ي ن م و (yanmu)"
+            },
+            {
+                question: "Apa yang dimaksud dengan Iqlab?",
+                options: [
+                    "Membaca jelas", 
+                    "Memasukkan", 
+                    "Mengubah nun mati menjadi mim", 
+                    "Menyamarkan"
+                ],
+                correct: 2,
+                explanation: "Iqlab adalah mengubah nun mati/tanwin menjadi mim saat bertemu huruf ba (ب)"
+            },
+            {
+                question: "Berapa panjang bacaan Mad Wajib Muttashil?",
+                options: ["2 harakat", "4 harakat", "5 harakat", "6 harakat"],
+                correct: 2,
+                explanation: "Mad Wajib Muttashil dibaca sepanjang 2.5 alif atau 5 harakat"
+            },
+            {
+                question: "Huruf apa saja yang termasuk Qalqalah?",
+                options: ["ق ط ب ج د", "ي ن م و", "ل ر", "ا و ي"],
+                correct: 0,
+                explanation: "Huruf Qalqalah adalah: ق ط ب ج د (Quthbu Jaddin)"
+            },
+            {
+                question: "Apa hukum Mim Mati jika bertemu dengan huruf Ba?",
+                options: ["Idzhar Syafawi", "Idgham Mimi", "Ikhfa Syafawi", "Iqlab"],
+                correct: 2,
+                explanation: "Mim Mati yang bertemu Ba dibaca Ikhfa Syafawi"
+            },
+            {
+                question: "Berapa panjang Mad Thobi'i?",
+                options: ["1 harakat", "2 harakat", "3 harakat", "4 harakat"],
+                correct: 1,
+                explanation: "Mad Thobi'i (mad asli) dibaca sepanjang 1 alif atau 2 harakat"
+            },
+            {
+                question: "Kapan Ra dibaca Tafkhim (tebal)?",
+                options: [
+                    "Saat berharakat kasrah",
+                    "Saat berharakat fathah atau dhammah",
+                    "Saat sukun setelah kasrah",
+                    "Tidak pernah"
+                ],
+                correct: 1,
+                explanation: "Ra dibaca Tafkhim saat berharakat fathah atau dhammah"
+            },
+            {
+                question: "Apa perbedaan Qalqalah Sughra dan Kubra?",
+                options: [
+                    "Hurufnya berbeda",
+                    "Sughra di tengah, Kubra saat waqaf",
+                    "Sughra lebih panjang",
+                    "Tidak ada perbedaan"
+                ],
+                correct: 1,
+                explanation: "Qalqalah Sughra terjadi di tengah kalimat, Kubra saat waqaf (berhenti)"
+            },
+            {
+                question: "Berapa huruf yang harus di-Ikhfa-kan pada Nun Mati/Tanwin?",
+                options: ["10 huruf", "12 huruf", "15 huruf", "20 huruf"],
+                correct: 2,
+                explanation: "Ikhfa Haqiqi memiliki 15 huruf"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('result').style.display = 'none';
+            document.querySelector('.btn-primary').style.display = 'none';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= quizData.length) {
+                showResult();
+                return;
+            }
+
+            answered = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            const q = quizData[currentQuestion];
+            const container = document.getElementById('quiz-container');
+            
+            let html = '<div class="quiz-section">';
+            html += `<div class="quiz-question">Pertanyaan ${currentQuestion + 1}/10: ${q.question}</div>`;
+            html += '<div class="quiz-options">';
+            
+            q.options.forEach((option, index) => {
+                html += `<div class="quiz-option" onclick="checkAnswer(${index})">${option}</div>`;
+            });
+            
+            html += '</div></div>';
+            container.innerHTML = html;
+            
+            updateProgress();
+        }
+
+        function checkAnswer(selected) {
+            if (answered) return;
+            
+            answered = true;
+            const q = quizData[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options[selected].classList.add(selected === q.correct ? 'correct' : 'wrong');
+            options[q.correct].classList.add('correct');
+            
+            if (selected === q.correct) {
+                score++;
+            }
+            
+            // Show explanation
+            const explanation = document.createElement('div');
+            explanation.style.marginTop = '20px';
+            explanation.style.padding = '15px';
+            explanation.style.background = '#e3f2fd';
+            explanation.style.borderRadius = '10px';
+            explanation.style.borderLeft = '4px solid #2196F3';
+            explanation.innerHTML = `<strong>Penjelasan:</strong> ${q.explanation}`;
+            document.querySelector('.quiz-section').appendChild(explanation);
+            
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / quizData.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('progress').textContent = currentQuestion + '/' + quizData.length;
+        }
+
+        function showResult() {
+            document.getElementById('quiz-container').innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            
+            const percentage = (score / quizData.length) * 100;
+            document.getElementById('score').textContent = `Nilai Anda: ${score}/${quizData.length} (${percentage.toFixed(0)}%)`;
+            
+            let feedback = '';
+            if (percentage >= 90) {
+                feedback = '🎉 Luar biasa! Anda sangat menguasai ilmu tajwid!';
+            } else if (percentage >= 70) {
+                feedback = '👍 Bagus! Pemahaman tajwid Anda sudah baik!';
+            } else if (percentage >= 50) {
+                feedback = '📚 Cukup baik! Terus belajar untuk meningkatkan pemahaman!';
+            } else {
+                feedback = '💪 Semangat! Mari pelajari lagi materi tajwid dengan lebih teliti!';
+            }
+            
+            document.getElementById('feedback').textContent = feedback;
+            
+            // Show restart button
+            const restartBtn = document.createElement('button');
+            restartBtn.className = 'btn btn-primary';
+            restartBtn.textContent = 'Ulangi Kuis';
+            restartBtn.onclick = startQuiz;
+            restartBtn.style.marginTop = '20px';
+            document.getElementById('result').appendChild(restartBtn);
+            
+            updateProgress();
+        }
+    </script>
+</body>
+</html>
